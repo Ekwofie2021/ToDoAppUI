@@ -1,25 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
+import { Container, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import './App.css';
+import { todoApi } from './features/store';
+import { AddTodo } from './AddTodo';
+import ToggleButton from '@mui/material/ToggleButton';
+import { useCallback } from 'react';
+import { Todo } from './features/todo';
+import CheckIcon from '@mui/icons-material/Check';
+
 
 function App() {
+  
+  const [updateTodoStatus, error] = todoApi.useUpdateTodoStatusMutation();
+  const updateTodo = useCallback((todo:Todo) => updateTodoStatus({...todo}), [updateTodoStatus]);
+
+  const setSelected = (todo: Todo) => {
+      updateTodo({...todo, isCompleted: !todo.isCompleted});
+   };
+
+  const {data: todos} = todoApi.useGetAllQuery(); 
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container maxWidth="sm">    
+      <div>
+        <h2>Todo App</h2>
+        <AddTodo/>
+      </div>
+
+      <TableHead>
+        <TableRow/>
+        <TableCell> Title </TableCell>
+        <TableCell> Description </TableCell>
+        <TableCell> Status </TableCell>
+        <TableCell> Action </TableCell>
+        <TableRow />
+      </TableHead>
+
+      <TableBody>  
+        {todos?.map((todo) =>(              
+        <TableRow key={todo.id}>
+          <TableCell>{todo.title}</TableCell>
+          <TableCell>{todo.description}</TableCell>
+          <TableCell>{todo.isCompleted === true ? "Completed" : "Pending"}</TableCell>
+          <TableCell>
+
+          <ToggleButton value="check"  onChange={() => {setSelected(todo); }}> 
+            <CheckIcon/>
+          </ToggleButton>
+          </TableCell>
+        </TableRow> 
+        ))}  
+      </TableBody>
+      
+      </Container>
   );
 }
 
