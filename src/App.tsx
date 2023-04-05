@@ -1,5 +1,4 @@
 import { Container, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
-import './App.css';
 import { todoApi } from './features/store';
 import { AddTodo } from './AddTodo';
 import ToggleButton from '@mui/material/ToggleButton';
